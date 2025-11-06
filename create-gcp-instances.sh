@@ -41,6 +41,12 @@ if [ ! -f id_rsa ]; then
     ssh-keygen -t rsa -b 4096 -f id_rsa -C "${SSH_USERNAME}" -N ""
 fi
 
+# --- Prepare Public Key for GCP ---
+# Prepare a modified copy of the public key as described in the GCP documentation
+# Use shell commands like echo, cat and file redirection
+# The format must be: USERNAME:SSH-KEY (username must match the username specified with ssh-keygen)
+echo "${SSH_USERNAME}:$(cat id_rsa.pub)" > id_rsa_gcp.pub
+
 # --- Hauptschleife zur Erstellung der Instanzen ---
 
 for MACHINE_TYPE in "${MACHINE_TYPES[@]}"; do
