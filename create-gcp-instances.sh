@@ -10,6 +10,9 @@ ZONE="europe-west4-a"
 IMAGE_FAMILY="ubuntu-2204-lts"
 IMAGE_PROJECT="ubuntu-os-cloud"
 
+# Defines the username for SSH access
+SSH_USERNAME="ubuntu"
+
 # "standard-4" means it uses 4 vCPUs and balanced vCPUs/memory (e.g. 4GB memory per vCPU)
 # "c3"         means family=computer-optimized   and generation=3
 # "c4"         means family=computer-optimized   and generation=3
@@ -28,6 +31,14 @@ gcloud config set project "${PROJECT_ID}"
 if [ $? -ne 0 ]; then
     echo "FEHLER: Konnte das gcloud Projekt nicht setzen. Bitte Projekt-ID überprüfen."
     exit 1
+fi
+
+# --- SSH Key Pair Generation ---
+# Generate a local SSH key pair and name the output files id_rsa and id_rsa.pub
+# Make sure to specify a valid username as the comment in the public key
+if [ ! -f id_rsa ]; then
+    echo "-> Generiere SSH-Key-Paar..."
+    ssh-keygen -t rsa -b 4096 -f id_rsa -C "${SSH_USERNAME}" -N ""
 fi
 
 # --- Hauptschleife zur Erstellung der Instanzen ---
